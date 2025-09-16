@@ -1,7 +1,12 @@
+//Budget API
+
 const express = require('express');
+const cors = require('cors');
 const fs = require('fs');
 const app = express();
 const port = 3000;
+
+app.use(cors());
 
 app.use('/', express.static('public'));
 
@@ -17,5 +22,5 @@ app.get('/budget', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`API served at http://localhost:${port}`)
 });
