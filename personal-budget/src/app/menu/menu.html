@@ -1,0 +1,11 @@
+ <nav>
+        <ul>
+            <li><a [routerLink]="['/']">Homepage</a></li>
+            <!-- This is an A11y Change -->
+            <li><a [routerLink]="['/about']" aria-label="Read more about the authors of this site.">About</a></li>
+            <!-- This is an A11y Change -->
+            <li><a [routerLink]="['/login']" aria-label="Login in with your credentials to access your account.">Login</a></li>
+            <!-- This is an A11y Change -->
+            <li><a href="https://google.com" target="_blank" aria-label="This will take you to Google's homepage">Google</a></li>
+        </ul>
+    </nav>
