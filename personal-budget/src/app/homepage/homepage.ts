@@ -1,14 +1,15 @@
 import { Component, NO_ERRORS_SCHEMA, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Article } from '../article/article';
-import { HttpClient } from '@angular/common/http';
+import {Breadcrumbs} from '../breadcrumbs/breadcrumbs';
+import { Data, BudgetData } from '../data';
 import { Chart, registerables } from 'chart.js';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'pb-homepage',
   standalone: true,
-  imports: [Article],
+  imports: [Article, Breadcrumbs],
   schemas: [NO_ERRORS_SCHEMA],
   templateUrl: './homepage.html',
   styleUrl: './homepage.scss'
@@ -30,25 +31,27 @@ export class Homepage implements OnInit {
             labels: []
         };
 
-  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(private dataService: Data, @Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
       Chart.register(...registerables);
     }
   }
 
   ngOnInit(): void {
-    this.http.get('http://localhost:3000/budget')
-    .subscribe((res: any) => {
-        for (let i = 0; i < res.myBudget.length; i++) {
-            this.dataSource.datasets[0].data[i] = res.myBudget[i].budget;
-            this.dataSource.labels[i] = res.myBudget[i].title;
+    this.dataService.budget$.subscribe((budgetData: BudgetData | null) => {
+      if (budgetData && budgetData.myBudget) {
+        for (let i = 0; i < budgetData.myBudget.length; i++) {
+            this.dataSource.datasets[0].data[i] = budgetData.myBudget[i].budget;
+            this.dataSource.labels[i] = budgetData.myBudget[i].title;
         }
         // Only create charts in the browser
         if (isPlatformBrowser(this.platformId)) {
           this.createChart();
-          this.createD3Chart(res.myBudget);
+          this.createD3Chart(budgetData.myBudget);
         }
+      }
     });
+    this.dataService.loadBudgetData();
   }
 
   createChart() {
